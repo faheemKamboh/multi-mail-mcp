@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [main]
+    paths:
+      - 'benchmark/**'
+      - '.github/workflows/model-benchmark.yml'
 
 permissions:
   contents: read
