@@ -1,0 +1,40 @@
+{
+  "active": [
+    {
+      "key": "smollm2-360m",
+      "model_id": "HuggingFaceTB/SmolLM2-360M-Instruct",
+      "tier": "floor",
+      "reason": "Very small instruction-tuned baseline to establish the lower bound."
+    },
+    {
+      "key": "qwen3-0.6b",
+      "model_id": "Qwen/Qwen3-0.6B",
+      "tier": "small",
+      "reason": "Existing sub-1B baseline."
+    },
+    {
+      "key": "tinyllama-1.1b",
+      "model_id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "tier": "older-small",
+      "reason": "Older small chat model that provides a useful weak-family comparison."
+    },
+    {
+      "key": "qwen3-1.7b",
+      "model_id": "Qwen/Qwen3-1.7B",
+      "tier": "mid",
+      "reason": "Existing stronger baseline."
+    },
+    {
+      "key": "smollm3-3b",
+      "model_id": "HuggingFaceTB/SmolLM3-3B",
+      "tier": "larger",
+      "reason": "Modern 3B open model from a different family."
+    },
+    {
+      "key": "qwen3-4b",
+      "model_id": "Qwen/Qwen3-4B",
+      "tier": "larger",
+      "reason": "Upper end of the first CPU qualification pass on standard runners."
+    }
+  ]
+}
