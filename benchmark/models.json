@@ -1,0 +1,26 @@
+{
+  "active": [
+    {
+      "key": "qwen3-0.6b",
+      "model_id": "Qwen/Qwen3-0.6B",
+      "reason": "Small Apache-2.0 baseline; test whether sub-1B is usable at all."
+    },
+    {
+      "key": "qwen3-1.7b",
+      "model_id": "Qwen/Qwen3-1.7B",
+      "reason": "Still practical on a standard CPU runner while materially stronger than the 0.6B baseline."
+    }
+  ],
+  "next_candidates": [
+    {
+      "key": "smollm3-3b",
+      "model_id": "HuggingFaceTB/SmolLM3-3B",
+      "reason": "Alternative model family around 3B; add if the baseline pair is insufficient or too close."
+    },
+    {
+      "key": "qwen3-4b",
+      "model_id": "Qwen/Qwen3-4B",
+      "reason": "Stronger Qwen tier; test only if runner disk/memory/time remain practical."
+    }
+  ]
+}
