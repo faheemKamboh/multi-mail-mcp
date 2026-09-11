@@ -1,30 +1,40 @@
 {
   "active": [
     {
-      "key": "qwen3-0.6b-q8",
-      "model_id": "Qwen/Qwen3-0.6B",
-      "gguf_repo": "Qwen/Qwen3-0.6B-GGUF",
-      "gguf_file": "Qwen3-0.6B-Q8_0.gguf",
-      "reason": "Small Apache-2.0 baseline; test whether sub-1B is usable at all."
+      "key": "smollm2-360m",
+      "model_id": "HuggingFaceTB/SmolLM2-360M-Instruct",
+      "tier": "floor",
+      "reason": "Very small instruction-tuned baseline to establish the lower bound."
     },
     {
-      "key": "qwen3-1.7b-q8",
+      "key": "qwen3-0.6b",
+      "model_id": "Qwen/Qwen3-0.6B",
+      "tier": "small",
+      "reason": "Existing sub-1B baseline."
+    },
+    {
+      "key": "tinyllama-1.1b",
+      "model_id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "tier": "older-small",
+      "reason": "Older small chat model that provides a useful weak-family comparison."
+    },
+    {
+      "key": "qwen3-1.7b",
       "model_id": "Qwen/Qwen3-1.7B",
-      "gguf_repo": "Qwen/Qwen3-1.7B-GGUF",
-      "gguf_file": "Qwen3-1.7B-Q8_0.gguf",
-      "reason": "Still practical on a standard CPU runner while materially stronger than the 0.6B baseline."
-    }
-  ],
-  "next_candidates": [
+      "tier": "mid",
+      "reason": "Existing stronger baseline."
+    },
     {
       "key": "smollm3-3b",
       "model_id": "HuggingFaceTB/SmolLM3-3B",
-      "reason": "Alternative model family around 3B; add if the baseline pair is insufficient or too close."
+      "tier": "larger",
+      "reason": "Modern 3B open model from a different family."
     },
     {
       "key": "qwen3-4b",
       "model_id": "Qwen/Qwen3-4B",
-      "reason": "Stronger Qwen tier; test only if runner disk/memory/time remain practical."
+      "tier": "larger",
+      "reason": "Upper end of the first CPU qualification pass on standard runners."
     }
   ]
 }
