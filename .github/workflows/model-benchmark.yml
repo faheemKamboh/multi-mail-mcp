@@ -14,11 +14,17 @@ permissions:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        model: [qwen3-0.6b-q8, qwen3-1.7b-q8]
+        model:
+          - smollm2-360m
+          - qwen3-0.6b
+          - tinyllama-1.1b
+          - qwen3-1.7b
+          - smollm3-3b
+          - qwen3-4b
 
     steps:
       - name: Checkout repository
@@ -38,7 +44,7 @@ jobs:
 
       - name: Score results
         run: |
-          python3 benchmark/score_results.py \
+          python3 benchmark/score_results_v2.py \
             --fixtures benchmark/fixtures/email_cases.json \
             --results "results/${{ matrix.model }}" \
             --model "${{ matrix.model }}"
