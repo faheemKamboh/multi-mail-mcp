@@ -1,0 +1,4 @@
+transformers>=4.51,<5
+safetensors>=0.4
+sentencepiece>=0.2
+psutil>=5.9
