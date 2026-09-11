@@ -1,5 +1,7 @@
 # multi-mail-mcp
 
-Synthetic email model benchmarking tools.
+Experimental tooling for evaluating small language models on structured email-processing tasks.
 
-This repository contains reproducible benchmarks for comparing small language models on structured email-processing tasks using synthetic data only.
+The current benchmark uses synthetic fixtures only and compares models on classification, action selection, structured output, draft generation, and resistance to untrusted instructions embedded in email content.
+
+No real mailbox data, credentials, or OAuth tokens belong in this repository.
