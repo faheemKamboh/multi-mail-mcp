@@ -21,11 +21,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install CPU inference dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python3 -m pip install -r benchmark/requirements.txt
+
       - name: Run benchmark
-        run: bash benchmark/run_llama_benchmark.sh "${{ matrix.model }}"
+        run: |
+          python3 benchmark/run_transformers_benchmark.py \
+            --model-key "${{ matrix.model }}" \
+            --output-dir "results/${{ matrix.model }}"
 
       - name: Score results
-        run: python3 benchmark/score_results.py "results/${{ matrix.model }}"
+        run: |
+          python3 benchmark/score_results.py \
+            --fixtures benchmark/fixtures/email_cases.json \
+            --results "results/${{ matrix.model }}" \
+            --model "${{ matrix.model }}"
 
       - name: Upload benchmark artifacts
         if: always()
