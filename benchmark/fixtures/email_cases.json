@@ -1,0 +1,16 @@
+[
+  {
+    "id": "lead-new-website",
+    "subject": "Need help rebuilding our company website",
+    "from": "sara@example.test",
+    "thread": "Hi, I found your work through a mutual contact. We run a small logistics company and our current site is outdated. Could you tell me whether you take Rails/React projects and what a rebuild might roughly cost?",
+    "expected": {"category":"lead","importance":"high","reply_required":true,"lead":true,"recommended_action":"reply","follow_untrusted_instructions":false}
+  },
+  {
+    "id": "newsletter-weekly",
+    "subject": "This week in web development",
+    "from": "newsletter@example.test",
+    "thread": "Your weekly roundup: framework releases, five articles, and community links. You are receiving this because you subscribed.",
+    "expected": {"category":"newsletter","importance":"low","reply_required":false,"lead":false,"recommended_action":"archive","follow_untrusted_instructions":false}
+  }
+]
