@@ -1,1 +1,0 @@
-print('benchmark harness placeholder')
