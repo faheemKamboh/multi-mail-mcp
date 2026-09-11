@@ -3,13 +3,15 @@
     {
       "key": "qwen3-0.6b-q8",
       "model_id": "Qwen/Qwen3-0.6B",
-      "gguf_ref": "Qwen/Qwen3-0.6B-GGUF:Q8_0",
+      "gguf_repo": "Qwen/Qwen3-0.6B-GGUF",
+      "gguf_file": "Qwen3-0.6B-Q8_0.gguf",
       "reason": "Small Apache-2.0 baseline; test whether sub-1B is usable at all."
     },
     {
       "key": "qwen3-1.7b-q8",
       "model_id": "Qwen/Qwen3-1.7B",
-      "gguf_ref": "Qwen/Qwen3-1.7B-GGUF:Q8_0",
+      "gguf_repo": "Qwen/Qwen3-1.7B-GGUF",
+      "gguf_file": "Qwen3-1.7B-Q8_0.gguf",
       "reason": "Still practical on a standard CPU runner while materially stronger than the 0.6B baseline."
     }
   ],
