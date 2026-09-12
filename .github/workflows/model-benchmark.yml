@@ -14,7 +14,7 @@ permissions:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
@@ -22,6 +22,7 @@ jobs:
           - mistral-7b-q4
           - qwen3-8b-q4
           - llama31-8b-q4
+          - mistral-nemo-12b-q4
           - qwen3-14b-q4
 
     steps:
