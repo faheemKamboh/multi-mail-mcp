@@ -1,0 +1,32 @@
+{
+  "active": [
+    {
+      "key": "mistral-7b-q4",
+      "hf_ref": "second-state/Mistral-7B-Instruct-v0.3-GGUF:Mistral-7B-Instruct-v0.3-Q4_K_M.gguf",
+      "family": "mistral",
+      "params": "7B",
+      "quant": "Q4_K_M"
+    },
+    {
+      "key": "qwen3-8b-q4",
+      "hf_ref": "Qwen/Qwen3-8B-GGUF:Q4_K_M",
+      "family": "qwen3",
+      "params": "8B",
+      "quant": "Q4_K_M"
+    },
+    {
+      "key": "llama31-8b-q4",
+      "hf_ref": "ggml-org/Meta-Llama-3.1-8B-Instruct-Q4_0-GGUF:Q4_0",
+      "family": "llama3.1",
+      "params": "8B",
+      "quant": "Q4_0"
+    },
+    {
+      "key": "qwen3-14b-q4",
+      "hf_ref": "Qwen/Qwen3-14B-GGUF:Q4_K_M",
+      "family": "qwen3",
+      "params": "14B",
+      "quant": "Q4_K_M"
+    }
+  ]
+}
