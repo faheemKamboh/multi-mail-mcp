@@ -3,10 +3,13 @@ import argparse
 import json
 import os
 import time
+import urllib.request
 from pathlib import Path
 
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
+
+FIXTURE_URL = "https://raw.githubusercontent.com/faheemKamboh/multi-mail-mcp/57f3762013c9ea7f612c1e9c3e2575598f2d5fc6/benchmark/fixtures/email_cases.json"
 
 
 def main():
@@ -17,7 +20,13 @@ def main():
 
     models = json.loads(Path("benchmark/large_models.json").read_text())
     model_meta = next(m for m in models["active"] if m["key"] == args.model_key)
-    fixtures = json.loads(Path("benchmark/fixtures/email_cases.json").read_text())
+
+    fixture_path = Path("benchmark/fixtures/email_cases.json")
+    fixture_path.parent.mkdir(parents=True, exist_ok=True)
+    with urllib.request.urlopen(FIXTURE_URL, timeout=30) as response:
+        fixture_path.write_bytes(response.read())
+    fixtures = json.loads(fixture_path.read_text())
+
     system_prompt = Path("benchmark/prompts/system.txt").read_text()
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -82,6 +91,8 @@ def main():
                 "family": model_meta["family"],
                 "params": model_meta["params"],
                 "quant": model_meta["quant"],
+                "fixture_url": FIXTURE_URL,
+                "fixture_cases": len(fixtures),
                 "download_seconds": round(download_seconds, 3),
                 "model_load_seconds": round(load_seconds, 3),
             },
