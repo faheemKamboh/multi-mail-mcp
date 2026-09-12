@@ -14,31 +14,31 @@ permissions:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         model:
-          - smollm2-360m
-          - qwen3-0.6b
-          - tinyllama-1.1b
-          - qwen3-1.7b
-          - smollm3-3b
-          - qwen3-4b
+          - mistral-7b-q4
+          - qwen3-8b-q4
+          - llama31-8b-q4
+          - qwen3-14b-q4
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install CPU inference dependencies
+      - name: Install GGUF inference dependencies
+        env:
+          CMAKE_ARGS: -DGGML_NATIVE=OFF
+          FORCE_CMAKE: '1'
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install torch --index-url https://download.pytorch.org/whl/cpu
-          python3 -m pip install -r benchmark/requirements.txt
+          python3 -m pip install -r benchmark/requirements_large.txt
 
       - name: Run benchmark
         run: |
-          python3 benchmark/run_transformers_benchmark.py \
+          python3 benchmark/run_large_model.py \
             --model-key "${{ matrix.model }}" \
             --output-dir "results/${{ matrix.model }}"
 
