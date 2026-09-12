@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         model:
-          - mistral-7b-q4
+          - qwen3-4b-q4
           - qwen3-8b-q4
           - llama31-8b-q4
           - mistral-nemo-12b-q4
