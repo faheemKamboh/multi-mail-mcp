@@ -2,11 +2,11 @@
   "stage": "qualification",
   "active": [
     {
-      "key": "mistral-7b-q4",
-      "repo": "second-state/Mistral-7B-Instruct-v0.3-GGUF",
-      "file": "Mistral-7B-Instruct-v0.3-Q4_K_M.gguf",
-      "family": "mistral",
-      "params": "7B",
+      "key": "qwen3-4b-q4",
+      "repo": "Qwen/Qwen3-4B-GGUF",
+      "file": "Qwen3-4B-Q4_K_M.gguf",
+      "family": "qwen3",
+      "params": "4B",
       "quant": "Q4_K_M"
     },
     {
