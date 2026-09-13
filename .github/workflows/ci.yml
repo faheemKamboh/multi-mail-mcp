@@ -20,10 +20,15 @@ jobs:
           python-version: '3.12'
       - name: Validate benchmark configuration
         run: python benchmark/validate_suite.py
-      - name: Compile benchmark scripts
+      - name: Validate agent qualification assets
+        run: python agent/qualification/validate.py
+      - name: Compile benchmark and agent scripts
         run: |
           python -m py_compile \
             benchmark/validate_suite.py \
             benchmark/run_gguf_benchmark.py \
             benchmark/run_transformers_benchmark.py \
-            benchmark/score_results.py
+            benchmark/score_results.py \
+            agent/qualification/validate.py \
+            agent/qualification/run_worker_qualification.py \
+            agent/qualification/run_reviewer_qualification.py
