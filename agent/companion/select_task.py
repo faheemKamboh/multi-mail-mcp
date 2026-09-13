@@ -35,6 +35,40 @@ def failed_attempts(task_manifest: str, runs: list[dict]) -> int:
     )
 
 
+def run_is_resolved(
+    state: CompanionState,
+    pull_requests: list[dict],
+    run: dict,
+) -> bool:
+    title = str(run.get("displayTitle", ""))
+    prefix = "agent-task "
+    if not title.startswith(prefix):
+        return False
+    manifest = title[len(prefix):]
+    matching_tasks = [task for task in state.tasks if task.task_manifest == manifest]
+    return any(pr_state(task.id, pull_requests) == "merged" for task in matching_tasks)
+
+
+def global_failure_breaker_blocked(
+    state: CompanionState,
+    pull_requests: list[dict],
+    runs: list[dict],
+    *,
+    window: int = 2,
+) -> bool:
+    recent_completed = [run for run in runs if run.get("status") == "completed"][:window]
+    if len(recent_completed) < window:
+        return False
+
+    unresolved_failures = sum(
+        1
+        for run in recent_completed
+        if run.get("conclusion") != "success"
+        and not run_is_resolved(state, pull_requests, run)
+    )
+    return unresolved_failures >= window
+
+
 def pending_tasks(state: CompanionState) -> list[CompanionTask]:
     """Return queue candidates before GitHub-derived dependency resolution.
 
@@ -91,9 +125,11 @@ def main() -> int:
     state = CompanionState.load(Path(args.state))
     prs = json.loads(Path(args.prs).read_text())
     runs = json.loads(Path(args.runs).read_text()) if args.runs else []
-    selected, selected_failures = select_next_task(state, prs, runs)
+    blocked = global_failure_breaker_blocked(state, prs, runs)
+    selected, selected_failures = (None, 0) if blocked else select_next_task(state, prs, runs)
 
     result = {
+        "blocked": blocked,
         "selected": selected is not None,
         "task_id": selected.id if selected else "",
         "task_manifest": selected.task_manifest if selected else "",
