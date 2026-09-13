@@ -1,0 +1,91 @@
+name: Qwen3 14B smoke qualification
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_cases:
+        description: Number of synthetic cases to run (0 = all)
+        required: false
+        default: '8'
+  push:
+    branches: [benchmark-qualification]
+    paths:
+      - '.github/workflows/qwen14b-smoke.yml'
+      - 'benchmark/run_gguf_benchmark.py'
+      - 'benchmark/score_results.py'
+      - 'benchmark/prompts/system.txt'
+      - 'benchmark/fixtures/email_cases.json'
+      - 'benchmark/large_models.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qwen14b-smoke
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PIP_NO_CACHE_DIR: '1'
+      HF_HOME: /tmp/huggingface
+      HF_XET_CHUNK_CACHE_SIZE_BYTES: '0'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Validate benchmark configuration
+        run: python benchmark/validate_suite.py
+
+      - name: Show runner capacity
+        run: |
+          nproc
+          free -h
+          df -h /
+
+      - name: Install CPU inference dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'huggingface_hub>=0.34'
+          python -m pip install 'llama-cpp-python>=0.3.16' \
+            --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+
+      - name: Run bounded Qwen3 14B qualification
+        env:
+          MAX_CASES: ${{ github.event.inputs.max_cases || '8' }}
+        run: |
+          python benchmark/run_gguf_benchmark.py \
+            --model-key qwen3-14b-q4 \
+            --max-cases "$MAX_CASES" \
+            --output-dir results/qwen3-14b-q4
+
+      - name: Score available cases
+        run: |
+          python benchmark/score_results.py \
+            --fixtures benchmark/fixtures/email_cases.json \
+            --results results/qwen3-14b-q4 \
+            --model qwen3-14b-q4 \
+            --allow-missing
+
+      - name: Show final capacity
+        if: always()
+        run: |
+          free -h
+          df -h /
+
+      - name: Upload qualification report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qwen3-14b-smoke
+          path: results/qwen3-14b-q4
+          if-no-files-found: warn
+          retention-days: 7
+
+# Requalification trigger: 2026-09-13

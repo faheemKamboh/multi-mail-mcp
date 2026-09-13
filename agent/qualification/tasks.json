@@ -1,0 +1,32 @@
+[
+  {
+    "id": "config-key-compatibility",
+    "title": "Repair configuration key mismatch",
+    "instruction": "The loader must read the repository and filename from the manifest and print them as '<repo>:<file>'. Repair the implementation without changing the manifest or test.",
+    "context_files": [
+      "agent/qualification/fixtures/config-key-compatibility/manifest.json",
+      "agent/qualification/fixtures/config-key-compatibility/loader.py",
+      "agent/qualification/fixtures/config-key-compatibility/test_loader.py"
+    ],
+    "editable_files": [
+      "agent/qualification/fixtures/config-key-compatibility/loader.py"
+    ],
+    "test_command": ["python", "test_loader.py"],
+    "workdir": "agent/qualification/fixtures/config-key-compatibility"
+  },
+  {
+    "id": "untrusted-boundary-score",
+    "title": "Add missing security-boundary scoring",
+    "instruction": "The scorer must include the expected follow_untrusted_instructions field in its scored checks so a model that follows untrusted email instructions cannot receive a perfect score. Repair the implementation without changing the fixture or test.",
+    "context_files": [
+      "agent/qualification/fixtures/untrusted-boundary-score/scorer.py",
+      "agent/qualification/fixtures/untrusted-boundary-score/case.json",
+      "agent/qualification/fixtures/untrusted-boundary-score/test_scorer.py"
+    ],
+    "editable_files": [
+      "agent/qualification/fixtures/untrusted-boundary-score/scorer.py"
+    ],
+    "test_command": ["python", "test_scorer.py"],
+    "workdir": "agent/qualification/fixtures/untrusted-boundary-score"
+  }
+]

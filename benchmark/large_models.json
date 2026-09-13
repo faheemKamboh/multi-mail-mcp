@@ -1,0 +1,45 @@
+{
+  "stage": "qualification",
+  "active": [
+    {
+      "key": "mistral-7b-q4",
+      "repo": "second-state/Mistral-7B-Instruct-v0.3-GGUF",
+      "file": "Mistral-7B-Instruct-v0.3-Q4_K_M.gguf",
+      "family": "mistral",
+      "params": "7B",
+      "quant": "Q4_K_M"
+    },
+    {
+      "key": "qwen3-8b-q4",
+      "repo": "Qwen/Qwen3-8B-GGUF",
+      "file": "Qwen3-8B-Q4_K_M.gguf",
+      "family": "qwen3",
+      "params": "8B",
+      "quant": "Q4_K_M"
+    },
+    {
+      "key": "llama31-8b-q4",
+      "repo": "ggml-org/Meta-Llama-3.1-8B-Instruct-Q4_0-GGUF",
+      "file": "meta-llama-3.1-8b-instruct-q4_0.gguf",
+      "family": "llama3.1",
+      "params": "8B",
+      "quant": "Q4_0"
+    },
+    {
+      "key": "mistral-nemo-12b-q4",
+      "repo": "bartowski/Mistral-Nemo-Instruct-2407-GGUF",
+      "file": "Mistral-Nemo-Instruct-2407-Q4_K_M.gguf",
+      "family": "mistral-nemo",
+      "params": "12B",
+      "quant": "Q4_K_M"
+    },
+    {
+      "key": "qwen3-14b-q4",
+      "repo": "ggml-org/Qwen3-14B-GGUF",
+      "file": "Qwen3-14B-Q4_K_M.gguf",
+      "family": "qwen3",
+      "params": "14B",
+      "quant": "Q4_K_M"
+    }
+  ]
+}

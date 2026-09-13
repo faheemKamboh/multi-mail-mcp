@@ -1,0 +1,5 @@
+results/
+benchmark-results/
+*.pyc
+__pycache__/
+.venv/

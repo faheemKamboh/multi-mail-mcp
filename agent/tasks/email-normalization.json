@@ -1,0 +1,22 @@
+{
+  "id": "email-normalization",
+  "title": "Normalize synthetic Gmail message metadata",
+  "objective": "Repair normalize_message so the Gmail-like synthetic fixture is converted into the fixed provider-neutral shape. Read headers case-insensitively and preserve only the fields required by the acceptance test. Do not change the fixture or test.",
+  "acceptance_criteria": [
+    "provider and thread identifiers are preserved",
+    "From, To, Subject, Reply-To, Return-Path, List-ID, and Authentication-Results headers are normalized",
+    "label IDs and snippet are preserved",
+    "the fixed acceptance test passes without modifying fixture or test"
+  ],
+  "context_files": [
+    "agent/tasks/fixtures/email-normalization/message.json",
+    "agent/tasks/fixtures/email-normalization/loader.py",
+    "agent/tasks/fixtures/email-normalization/test_loader.py"
+  ],
+  "editable_files": [
+    "agent/tasks/fixtures/email-normalization/loader.py"
+  ],
+  "test_commands": [
+    ["python", "agent/tasks/fixtures/email-normalization/test_loader.py"]
+  ]
+}
