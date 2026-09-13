@@ -16,11 +16,29 @@ Current work focuses on reproducible synthetic benchmarks, deterministic validat
 
 - Use GitHub Actions for reproducible development, tests, qualification runs, and bounded batch jobs.
 - Do not use GitHub Actions as the permanent production mailbox runtime.
+- Development must not depend on real mailbox credentials or production accounts.
+- Use synthetic fixtures, mocks, fake provider responses, and generated mailbox histories until staging/production integration.
 - Keep real mailbox content, credentials, tokens, cookies, and account secrets out of the repository.
 - Keep provider-specific behavior behind adapters.
 - External research tools are verification capabilities; they provide evidence but do not decide or perform mailbox actions.
 - Classification and action proposals should be auditable with structured decision, confidence, evidence, rule, verifier, and timestamp fields.
+- Prompts, routing policies, thresholds, and verifier behavior are versioned/tested artifacts rather than informal configuration.
 - Default to read-only and dry-run behavior until write paths are explicitly enabled and tested.
+
+## Qualification strategy
+
+GitHub Actions should exercise agents/models against a synthetic mailbox corpus that includes:
+
+- ordinary transactional and promotional mail;
+- leads, clients, receipts, security alerts, newsletters, and low-value noise;
+- sender/domain clusters and repeated historical patterns;
+- ambiguous messages that require abstention or review;
+- multilingual and Roman-Urdu cases;
+- malformed content and missing metadata;
+- prompt injection, adversarial instructions, and untrusted links/content;
+- verification requests with synthetic/replayable evidence adapters.
+
+Each qualification run should produce reproducible scoring and enough artifacts to compare model, prompt, policy, and threshold changes. A model or prompt change should only be promoted when it improves the agreed benchmark without unacceptable regressions.
 
 ## Roadmap
 
@@ -29,16 +47,18 @@ Current work focuses on reproducible synthetic benchmarks, deterministic validat
 - [x] Synthetic benchmark direction established.
 - [x] Broad fixture coverage added.
 - [x] Prompt-injection and untrusted-input cases included.
+- [x] Credential-free development/test policy documented.
 - [ ] Add cheap deterministic CI separate from model inference.
-- [ ] Add a manually triggered model benchmark workflow.
+- [ ] Add a manually triggered model/agent benchmark workflow.
 - [ ] Keep benchmark documentation aligned with the fixture suite.
+- [ ] Add repeated practice/evaluation runs for prompt and policy refinement.
 - [ ] Record reproducible qualification evidence before selecting a model path.
 - [ ] Resolve duplication between benchmark implementations.
 
 ### Phase 1 — read-only core
 
 - [ ] Provider interface and normalized mail schema.
-- [ ] Gmail read-only adapter.
+- [ ] Gmail-compatible read-only adapter with fixture/mock implementation first.
 - [ ] Thread normalization and sender/domain identity extraction.
 - [ ] Sender clustering and profile cache.
 - [ ] Classification policy and dry-run action proposal.
@@ -49,6 +69,7 @@ Current work focuses on reproducible synthetic benchmarks, deterministic validat
 
 - [ ] Define verification request/result schemas.
 - [ ] Add a generic verifier interface and research-tool adapter.
+- [ ] Provide fake/replay verifier implementations for deterministic tests.
 - [ ] Prefer official/public sources and record evidence provenance.
 - [ ] Separate sender identity verification from message-specific claim verification.
 - [ ] Cache sender/company verification to avoid unnecessary repeated research.
