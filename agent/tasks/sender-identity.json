@@ -1,0 +1,22 @@
+{
+  "id": "sender-identity",
+  "title": "Extract normalized sender identities",
+  "objective": "Repair extract_sender_identity so it derives canonical sender-related identities from the fixed provider-neutral message fixtures. Parse mailbox fields rather than copying display-name strings, normalize addresses/domains to lowercase, normalize List-ID to its identifier, and preserve missing optional identities as null. Do not change the test.",
+  "acceptance_criteria": [
+    "From is parsed into a lowercase mailbox address and domain without retaining the display name",
+    "Reply-To and Return-Path are parsed into lowercase mailbox addresses and domains when present",
+    "List-ID is normalized to its identifier and corresponding lowercase domain",
+    "missing optional Reply-To, Return-Path, and List-ID values remain null instead of being guessed",
+    "the fixed acceptance test passes without modification"
+  ],
+  "context_files": [
+    "agent/tasks/fixtures/sender-identity/extractor.py",
+    "agent/tasks/fixtures/sender-identity/test_extractor.py"
+  ],
+  "editable_files": [
+    "agent/tasks/fixtures/sender-identity/extractor.py"
+  ],
+  "test_commands": [
+    ["python", "agent/tasks/fixtures/sender-identity/test_extractor.py"]
+  ]
+}
