@@ -32,6 +32,11 @@ def run() -> None:
     assert pr_state("normalize-email", [{
         "headRefName": "agent/normalize-email-123",
         "state": "CLOSED",
+        "mergedAt": None,
+    }]) == "closed"
+    assert pr_state("normalize-email", [{
+        "headRefName": "agent/normalize-email-123",
+        "state": "CLOSED",
         "mergedAt": "2026-09-13T00:00:00Z",
     }]) == "merged"
 
