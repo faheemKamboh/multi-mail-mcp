@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 from agent.companion.contracts import CompanionState, CompanionTask
-from agent.companion.select_task import failed_attempts, pr_state, slug
+from agent.companion.select_task import (
+    failed_attempts,
+    pending_tasks,
+    pr_state,
+    select_next_task,
+    slug,
+)
 
 
 def run() -> None:
@@ -22,6 +28,7 @@ def run() -> None:
     )
     state = CompanionState(tasks=[dependent, task])
     assert [item.id for item in state.ready_tasks()] == ["normalize-email"]
+    assert [item.id for item in pending_tasks(state)] == ["normalize-email", "classify-email"]
 
     assert pr_state("normalize-email", []) is None
     assert pr_state("normalize-email", [{
@@ -34,11 +41,20 @@ def run() -> None:
         "state": "CLOSED",
         "mergedAt": None,
     }]) == "closed"
-    assert pr_state("normalize-email", [{
+    merged_prs = [{
         "headRefName": "agent/normalize-email-123",
         "state": "CLOSED",
         "mergedAt": "2026-09-13T00:00:00Z",
-    }]) == "merged"
+    }]
+    assert pr_state("normalize-email", merged_prs) == "merged"
+
+    selected, failures = select_next_task(state, [], [])
+    assert selected is not None and selected.id == "normalize-email"
+    assert failures == 0
+
+    selected, failures = select_next_task(state, merged_prs, [])
+    assert selected is not None and selected.id == "classify-email"
+    assert failures == 0
 
     runs = [
         {
