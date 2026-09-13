@@ -46,6 +46,7 @@ def main():
         n_ctx=2048,
         n_threads=max(1, min(4, os.cpu_count() or 1)),
         n_batch=128,
+        seed=42,
         verbose=False,
     )
     load_seconds = time.perf_counter() - load_started
@@ -53,6 +54,7 @@ def main():
     timings = []
     for case in fixtures:
         user_text = (
+            "/no_think\n"
             "Analyze this synthetic email/thread. Return only the required JSON object.\n\n"
             f"From: {case['from']}\n"
             f"Subject: {case['subject']}\n\n"
@@ -64,8 +66,12 @@ def main():
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_text},
             ],
-            temperature=0,
-            max_tokens=220,
+            temperature=0.7,
+            top_p=0.8,
+            top_k=20,
+            min_p=0.0,
+            seed=42,
+            max_tokens=500,
         )
         elapsed_ms = round((time.perf_counter() - started) * 1000)
         text = (result["choices"][0]["message"]["content"] or "").strip()
