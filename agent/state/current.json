@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "cycle": 0,
+  "active_task": null,
+  "last_result": null,
+  "tasks": [
+    {
+      "id": "runtime-smoke",
+      "title": "Exercise the bounded agent runtime on a synthetic task",
+      "task_manifest": "agent/tasks/runtime-smoke.json",
+      "status": "ready",
+      "priority": 10,
+      "depends_on": [],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Synthetic qualification task only."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+name: Development companion CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Validate queue and trusted task manifests
+        run: python -m agent.companion.validate_state
+      - name: Compile companion runtime
+        run: |
+          python -m py_compile \
+            agent/companion/contracts.py \
+            agent/companion/select_task.py \
+            agent/companion/validate_state.py \
+            agent/companion/selftest.py
+      - name: Run deterministic companion tests
+        run: python -m agent.companion.selftest

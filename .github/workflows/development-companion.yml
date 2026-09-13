@@ -1,0 +1,98 @@
+name: Development companion scheduler
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: read
+  actions: write
+  pull-requests: read
+
+concurrency:
+  group: development-companion-scheduler
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Validate trusted queue
+        run: python -m agent.companion.validate_state
+
+      - name: Refuse to overlap a bounded agent run
+        id: active
+        run: |
+          count=$(gh run list \
+            --repo '${{ github.repository }}' \
+            --workflow agent-task.yml \
+            --limit 20 \
+            --json status \
+            --jq '[.[] | select(.status == "queued" or .status == "in_progress")] | length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Apply global failure circuit breaker
+        if: steps.active.outputs.count == '0'
+        id: breaker
+        run: |
+          failures=$(gh run list \
+            --repo '${{ github.repository }}' \
+            --workflow agent-task.yml \
+            --limit 2 \
+            --json status,conclusion \
+            --jq '[.[] | select(.status == "completed" and .conclusion != "success")] | length')
+          recent=$(gh run list \
+            --repo '${{ github.repository }}' \
+            --workflow agent-task.yml \
+            --limit 2 \
+            --json status \
+            --jq 'length')
+          blocked=false
+          if [ "$recent" = "2" ] && [ "$failures" = "2" ]; then
+            blocked=true
+          fi
+          echo "blocked=$blocked" >> "$GITHUB_OUTPUT"
+
+      - name: Read durable GitHub state
+        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
+        run: |
+          gh pr list \
+            --repo '${{ github.repository }}' \
+            --state all \
+            --limit 200 \
+            --json headRefName,state,mergedAt \
+            > /tmp/companion-prs.json
+          gh run list \
+            --repo '${{ github.repository }}' \
+            --workflow agent-task.yml \
+            --limit 1000 \
+            --json displayTitle,status,conclusion \
+            > /tmp/companion-runs.json
+
+      - name: Select next eligible task
+        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
+        id: task
+        run: |
+          python -m agent.companion.select_task \
+            --state agent/state/current.json \
+            --prs /tmp/companion-prs.json \
+            --runs /tmp/companion-runs.json \
+            --out /tmp/selection.json
+          echo "task_file=$(python -c 'import json; print(json.load(open("/tmp/selection.json"))["task_manifest"])')" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch bounded worker/reviewer pipeline
+        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true' && steps.task.outputs.task_file != ''
+        run: |
+          gh workflow run agent-task.yml \
+            --repo '${{ github.repository }}' \
+            -f task_file='${{ steps.task.outputs.task_file }}' \
+            -f model_key=qwen3-14b-q4
