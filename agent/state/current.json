@@ -58,6 +58,39 @@
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Account-scoped exact sender/List-ID grouping key; domain is fallback only."
+    },
+    {
+      "id": "production-message-normalizer",
+      "title": "Promote message normalization into production core",
+      "task_manifest": "agent/tasks/production-message-normalizer.json",
+      "status": "ready",
+      "priority": 60,
+      "depends_on": ["sender-stream-key"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "First bounded task that edits the production source package rather than qualification fixture code."
+    },
+    {
+      "id": "read-provider-contract",
+      "title": "Define the production read-only provider contract",
+      "task_manifest": "agent/tasks/read-provider-contract.json",
+      "status": "ready",
+      "priority": 70,
+      "depends_on": ["production-message-normalizer"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Provider-neutral Phase 1 read boundary; mailbox mutation methods are explicitly excluded."
+    },
+    {
+      "id": "gmail-fixture-read-adapter",
+      "title": "Implement credential-free Gmail read adapter",
+      "task_manifest": "agent/tasks/gmail-fixture-read-adapter.json",
+      "status": "ready",
+      "priority": 80,
+      "depends_on": ["read-provider-contract"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Injected fake Gmail-style client only; no secrets, OAuth, or production mailbox access."
     }
   ]
 }

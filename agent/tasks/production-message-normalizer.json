@@ -1,0 +1,22 @@
+{
+  "id": "production-message-normalizer",
+  "title": "Promote message normalization into production core",
+  "objective": "Repair normalize_provider_message in the production source package so Gmail-like synthetic provider messages are converted into the fixed provider-neutral shape. Read headers case-insensitively, preserve raw header values for later identity/authentication stages, and leave missing optional headers as null. Do not change the test.",
+  "acceptance_criteria": [
+    "provider message and thread identifiers are preserved",
+    "From, To, Subject, Reply-To, Return-Path, List-ID, and Authentication-Results are read case-insensitively without semantic interpretation",
+    "label IDs and snippet are preserved",
+    "missing optional headers remain null rather than being inferred",
+    "the production acceptance test passes without modification"
+  ],
+  "context_files": [
+    "src/multi_mail/normalize.py",
+    "tests/test_production_normalizer.py"
+  ],
+  "editable_files": [
+    "src/multi_mail/normalize.py"
+  ],
+  "test_commands": [
+    ["python", "tests/test_production_normalizer.py"]
+  ]
+}

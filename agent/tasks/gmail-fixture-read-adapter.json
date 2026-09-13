@@ -1,0 +1,25 @@
+{
+  "id": "gmail-fixture-read-adapter",
+  "title": "Implement credential-free Gmail read adapter",
+  "objective": "Repair GmailReadOnlyAdapter so it wraps an injected Gmail-style client without constructing credentials, lists provider message references with pagination, and retrieves a message using metadata format before passing it through the production provider-message normalizer. Do not add mailbox mutations and do not change the test.",
+  "acceptance_criteria": [
+    "message references are listed through the injected Gmail-style client and converted to provider-neutral IDs",
+    "the supplied page token and returned next-page token are preserved",
+    "single-message retrieval uses metadata format and the configured user ID",
+    "retrieved provider payloads are normalized through the production normalization boundary",
+    "the adapter introduces no send, delete, label, archive, or trash behavior and requires no credentials in repository code",
+    "the fixed acceptance test passes without modification"
+  ],
+  "context_files": [
+    "src/multi_mail/providers/gmail.py",
+    "src/multi_mail/providers/base.py",
+    "src/multi_mail/normalize.py",
+    "tests/test_gmail_fixture_adapter.py"
+  ],
+  "editable_files": [
+    "src/multi_mail/providers/gmail.py"
+  ],
+  "test_commands": [
+    ["python", "tests/test_gmail_fixture_adapter.py"]
+  ]
+}
