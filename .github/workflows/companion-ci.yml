@@ -1,9 +1,12 @@
 name: Development companion CI
+
 on:
   pull_request:
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -13,5 +16,14 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - run: python -m agent.companion.validate_state
-      - run: python -m py_compile agent/companion/contracts.py agent/companion/loop.py agent/companion/reconcile.py agent/companion/selection.py agent/companion/validate_state.py
+      - name: Validate queue and trusted task manifests
+        run: python -m agent.companion.validate_state
+      - name: Compile companion runtime
+        run: |
+          python -m py_compile \
+            agent/companion/contracts.py \
+            agent/companion/select_task.py \
+            agent/companion/validate_state.py \
+            agent/companion/selftest.py
+      - name: Run deterministic companion tests
+        run: python -m agent.companion.selftest
