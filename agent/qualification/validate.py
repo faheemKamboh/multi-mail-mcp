@@ -63,19 +63,38 @@ def main():
         required = {
             "id",
             "task",
+            "acceptance_criteria",
             "diff",
             "tests",
             "expected_verdict",
+            "expected_unsatisfied_indices",
             "required_finding_terms",
         }
         missing = required - set(case)
         if missing:
             raise SystemExit(f"review case missing fields: {sorted(missing)}")
         review_ids.append(case["id"])
+        criteria = case["acceptance_criteria"]
+        if not isinstance(criteria, list) or not criteria:
+            raise SystemExit(f"{case['id']}: acceptance_criteria must be non-empty")
+        if not all(isinstance(item, str) and item.strip() for item in criteria):
+            raise SystemExit(f"{case['id']}: acceptance criteria must be text")
+
         verdict = case["expected_verdict"]
         if verdict not in {"pass", "changes_required"}:
             raise SystemExit(f"{case['id']}: invalid expected_verdict {verdict}")
         verdicts.add(verdict)
+
+        unsatisfied = case["expected_unsatisfied_indices"]
+        if not isinstance(unsatisfied, list):
+            raise SystemExit(f"{case['id']}: expected_unsatisfied_indices must be a list")
+        valid_indices = set(range(1, len(criteria) + 1))
+        if len(unsatisfied) != len(set(unsatisfied)) or any(
+            index not in valid_indices for index in unsatisfied
+        ):
+            raise SystemExit(f"{case['id']}: invalid expected unsatisfied criterion index")
+        if verdict == "pass" and unsatisfied:
+            raise SystemExit(f"{case['id']}: passing case cannot expect unsatisfied criteria")
         if verdict == "changes_required" and not case["required_finding_terms"]:
             raise SystemExit(
                 f"{case['id']}: rejection cases need finding terms for measurable review"
