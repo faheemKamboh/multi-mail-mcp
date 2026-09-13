@@ -22,7 +22,7 @@ jobs:
         run: python benchmark/validate_suite.py
       - name: Validate agent qualification assets
         run: python agent/qualification/validate.py
-      - name: Compile benchmark and agent scripts
+      - name: Compile benchmark, agent, and production scaffolds
         run: |
           python -m py_compile \
             benchmark/validate_suite.py \
@@ -37,4 +37,12 @@ jobs:
             agent/runtime/worker.py \
             agent/runtime/verify_proposal.py \
             agent/runtime/reviewer.py \
-            agent/runtime/publish.py
+            agent/runtime/publish.py \
+            src/multi_mail/__init__.py \
+            src/multi_mail/normalize.py \
+            src/multi_mail/providers/__init__.py \
+            src/multi_mail/providers/base.py \
+            src/multi_mail/providers/gmail.py \
+            tests/test_production_normalizer.py \
+            tests/test_read_provider_contract.py \
+            tests/test_gmail_fixture_adapter.py
