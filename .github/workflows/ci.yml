@@ -1,0 +1,29 @@
+name: Deterministic CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Validate benchmark configuration
+        run: python benchmark/validate_suite.py
+      - name: Compile benchmark scripts
+        run: |
+          python -m py_compile \
+            benchmark/validate_suite.py \
+            benchmark/run_gguf_benchmark.py \
+            benchmark/run_transformers_benchmark.py \
+            benchmark/score_results.py
