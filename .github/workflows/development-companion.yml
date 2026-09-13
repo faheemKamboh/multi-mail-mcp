@@ -40,7 +40,7 @@ jobs:
             --jq '[.[] | select(.status == "queued" or .status == "in_progress")] | length')
           echo "count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Apply failure circuit breaker
+      - name: Apply global failure circuit breaker
         if: steps.active.outputs.count == '0'
         id: breaker
         run: |
@@ -62,7 +62,7 @@ jobs:
           fi
           echo "blocked=$blocked" >> "$GITHUB_OUTPUT"
 
-      - name: Read durable pull-request state
+      - name: Read durable GitHub state
         if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
         run: |
           gh pr list \
@@ -71,6 +71,12 @@ jobs:
             --limit 200 \
             --json headRefName,state,mergedAt \
             > /tmp/companion-prs.json
+          gh run list \
+            --repo '${{ github.repository }}' \
+            --workflow agent-task.yml \
+            --limit 1000 \
+            --json displayTitle,status,conclusion \
+            > /tmp/companion-runs.json
 
       - name: Select next eligible task
         if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
@@ -79,6 +85,7 @@ jobs:
           python -m agent.companion.select_task \
             --state agent/state/current.json \
             --prs /tmp/companion-prs.json \
+            --runs /tmp/companion-runs.json \
             --out /tmp/selection.json
           echo "task_file=$(python -c 'import json; print(json.load(open("/tmp/selection.json"))["task_manifest"])')" >> "$GITHUB_OUTPUT"
 
