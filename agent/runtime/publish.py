@@ -13,6 +13,9 @@ from pathlib import Path
 from contracts import REPO_ROOT, load_task
 
 
+ACTIONS_PR_CREATION_DISABLED = "GitHub Actions is not permitted to create or approve pull requests"
+
+
 def checked(argv: list[str], *, env: dict | None = None) -> str:
     completed = subprocess.run(
         argv,
@@ -82,8 +85,8 @@ def main() -> None:
             "Automated bounded task proposal.",
             "",
             f"Task: `{task['id']}` — {task['title']}",
-            f"Deterministic tests: passed",
-            f"Independent reviewer: pass",
+            "Deterministic tests: passed",
+            "Independent reviewer: pass",
             f"Reviewer reason: {review.get('reason', '')}",
             f"Workflow evidence: {run_url}" if run_url else "",
             "",
@@ -96,24 +99,55 @@ def main() -> None:
     if not token:
         raise SystemExit("GH_TOKEN/GITHUB_TOKEN is required only for the publish job")
     env["GH_TOKEN"] = token
-    pr_url = checked(
-        [
-            "gh",
-            "pr",
-            "create",
-            "--draft",
-            "--base",
-            args.base,
-            "--head",
-            branch,
-            "--title",
-            f"agent: {task['title']}",
-            "--body",
-            body,
-        ],
+
+    create_argv = [
+        "gh",
+        "pr",
+        "create",
+        "--draft",
+        "--base",
+        args.base,
+        "--head",
+        branch,
+        "--title",
+        f"agent: {task['title']}",
+        "--body",
+        body,
+    ]
+    completed = subprocess.run(
+        create_argv,
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
         env=env,
+        check=False,
     )
-    print(json.dumps({"branch": branch, "pull_request": pr_url}, indent=2))
+    if completed.returncode == 0:
+        print(json.dumps({"branch": branch, "pull_request": completed.stdout.strip()}, indent=2))
+        return
+
+    if ACTIONS_PR_CREATION_DISABLED in completed.stderr:
+        print(
+            json.dumps(
+                {
+                    "branch": branch,
+                    "pull_request": None,
+                    "publication_status": "branch_pushed_pr_creation_disabled",
+                    "message": (
+                        "Reviewed branch was pushed successfully, but repository settings prevent "
+                        "GitHub Actions from creating pull requests. Maintainer PR creation is required."
+                    ),
+                },
+                indent=2,
+            )
+        )
+        return
+
+    raise SystemExit(
+        f"command failed ({completed.returncode}): {' '.join(create_argv)}\n"
+        f"stdout:\n{completed.stdout[-4000:]}\n"
+        f"stderr:\n{completed.stderr[-4000:]}"
+    )
 
 
 if __name__ == "__main__":
