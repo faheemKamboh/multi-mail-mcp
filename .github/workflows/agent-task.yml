@@ -1,4 +1,5 @@
 name: Bounded agent task
+run-name: agent-task ${{ inputs.task_file }}
 
 on:
   workflow_dispatch:
