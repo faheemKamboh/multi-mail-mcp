@@ -1,0 +1,44 @@
+name: Development companion v2
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: development-companion-v2
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m agent.companion.validate_state
+      - name: Check for active bounded task
+        id: active
+        run: |
+          count=$(gh run list --workflow agent-task.yml --limit 10 --json status --jq '[.[] | select(.status == "queued" or .status == "in_progress")] | length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      - name: Select next task
+        if: steps.active.outputs.count == '0'
+        id: task
+        run: |
+          python -m agent.companion.loop --state agent/state/current.json --out /tmp/companion.json --max-tasks 1
+          task_file=$(python -c 'import json; d=json.load(open("/tmp/companion.json")); print(d["selected"][0]["task_manifest"] if d["selected"] else "")')
+          echo "task_file=$task_file" >> "$GITHUB_OUTPUT"
+      - name: Dispatch bounded task
+        if: steps.active.outputs.count == '0' && steps.task.outputs.task_file != ''
+        run: gh workflow run agent-task.yml -f task_file="${{ steps.task.outputs.task_file }}" -f model_key=qwen3-14b-q4
