@@ -31,4 +31,10 @@ jobs:
             benchmark/score_results.py \
             agent/qualification/validate.py \
             agent/qualification/run_worker_qualification.py \
-            agent/qualification/run_reviewer_qualification.py
+            agent/qualification/run_reviewer_qualification.py \
+            agent/runtime/contracts.py \
+            agent/runtime/model.py \
+            agent/runtime/worker.py \
+            agent/runtime/verify_proposal.py \
+            agent/runtime/reviewer.py \
+            agent/runtime/publish.py
