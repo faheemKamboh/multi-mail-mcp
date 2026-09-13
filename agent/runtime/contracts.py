@@ -47,6 +47,7 @@ def validate_task(task: dict) -> None:
         "id",
         "title",
         "objective",
+        "acceptance_criteria",
         "context_files",
         "editable_files",
         "test_commands",
@@ -61,6 +62,12 @@ def validate_task(task: dict) -> None:
         raise ValueError("task title must be non-empty text")
     if not isinstance(task["objective"], str) or not task["objective"].strip():
         raise ValueError("task objective must be non-empty text")
+
+    criteria = task["acceptance_criteria"]
+    if not isinstance(criteria, list) or not criteria:
+        raise ValueError("acceptance_criteria must be a non-empty list")
+    if not all(isinstance(item, str) and item.strip() for item in criteria):
+        raise ValueError("acceptance_criteria entries must be non-empty strings")
 
     context_files = task["context_files"]
     editable_files = task["editable_files"]
