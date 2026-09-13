@@ -24,6 +24,9 @@ Current work focuses on reproducible synthetic benchmarks, deterministic validat
 - Classification and action proposals should be auditable with structured decision, confidence, evidence, rule, verifier, and timestamp fields.
 - Prompts, routing policies, thresholds, and verifier behavior are versioned/tested artifacts rather than informal configuration.
 - Default to read-only and dry-run behavior until write paths are explicitly enabled and tested.
+- Coding workers propose structured edits; the harness controls editable paths, applies changes, and runs fixed deterministic tests.
+- Worker and reviewer qualification remain independent; reviewer input is task/diff/test evidence rather than worker reasoning.
+- Do not enable autonomous merge while the agent development loop is still being qualified.
 
 ## Qualification strategy
 
@@ -38,6 +41,8 @@ GitHub Actions should exercise agents/models against a synthetic mailbox corpus 
 - prompt injection, adversarial instructions, and untrusted links/content;
 - verification requests with synthetic/replayable evidence adapters.
 
+Email-processing qualification and coding-agent qualification are separate. Coding workers are tested against intentionally broken synthetic mini-repositories with fixed acceptance tests. Independent reviewers are tested on correct patches as well as security-boundary omissions, test tampering, and secret/environment exposure.
+
 Each qualification run should produce reproducible scoring and enough artifacts to compare model, prompt, policy, and threshold changes. A model or prompt change should only be promoted when it improves the agreed benchmark without unacceptable regressions.
 
 ## Roadmap
@@ -48,12 +53,15 @@ Each qualification run should produce reproducible scoring and enough artifacts 
 - [x] Broad fixture coverage added.
 - [x] Prompt-injection and untrusted-input cases included.
 - [x] Credential-free development/test policy documented.
-- [ ] Add cheap deterministic CI separate from model inference.
-- [ ] Add a manually triggered model/agent benchmark workflow.
-- [ ] Keep benchmark documentation aligned with the fixture suite.
+- [x] Cheap deterministic CI separated from model inference.
+- [x] Manually/event-triggered bounded model/agent qualification workflows added.
+- [x] Benchmark documentation aligned with the current qualification suites.
+- [x] Coding-worker and independent-reviewer qualification harnesses added.
+- [x] Duplicate older benchmark PR resolved as superseded.
 - [ ] Add repeated practice/evaluation runs for prompt and policy refinement.
-- [ ] Record reproducible qualification evidence before selecting a model path.
-- [ ] Resolve duplication between benchmark implementations.
+- [ ] Record reproducible Qwen3 14B email/coding/reviewer qualification evidence.
+- [ ] Decide whether Qwen3 14B is viable as a bounded worker/reviewer candidate.
+- [ ] Add the first trusted task-queue/orchestrator workflow after qualification gates pass.
 
 ### Phase 1 — read-only core
 
