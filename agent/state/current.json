@@ -14,6 +14,17 @@
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Synthetic qualification task only."
+    },
+    {
+      "id": "email-normalization",
+      "title": "Normalize synthetic Gmail message metadata",
+      "task_manifest": "agent/tasks/email-normalization.json",
+      "status": "ready",
+      "priority": 20,
+      "depends_on": ["runtime-smoke"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "First domain task; credential-free Gmail-like fixture only."
     }
   ]
 }
