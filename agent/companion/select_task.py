@@ -53,7 +53,10 @@ def main() -> int:
     selected = None
     selected_failures = 0
     for task in state.ready_tasks():
-        if pr_state(task.id, prs) is not None:
+        # A merged PR completes the task and an open PR means work is already
+        # awaiting maintainer review. A closed, unmerged PR is retryable; the
+        # bounded workflow-run history below remains the source of attempt count.
+        if pr_state(task.id, prs) in {"merged", "open"}:
             continue
         failures = task.attempts + failed_attempts(task.task_manifest, runs)
         if failures >= task.max_attempts:
