@@ -1,0 +1,22 @@
+{
+  "id": "authentication-results",
+  "title": "Parse SPF DKIM and DMARC verdicts",
+  "objective": "Repair parse_authentication_results so it extracts SPF, DKIM, and DMARC verdicts case-insensitively from the fixed synthetic Authentication-Results strings. Do not change the test.",
+  "acceptance_criteria": [
+    "SPF verdict is extracted and normalized to lowercase",
+    "DKIM verdict is extracted and normalized to lowercase",
+    "DMARC verdict is extracted and normalized to lowercase",
+    "additional mechanism parameters do not change the verdict",
+    "the fixed acceptance test passes without modification"
+  ],
+  "context_files": [
+    "agent/tasks/fixtures/authentication-results/parser.py",
+    "agent/tasks/fixtures/authentication-results/test_parser.py"
+  ],
+  "editable_files": [
+    "agent/tasks/fixtures/authentication-results/parser.py"
+  ],
+  "test_commands": [
+    ["python", "agent/tasks/fixtures/authentication-results/test_parser.py"]
+  ]
+}
