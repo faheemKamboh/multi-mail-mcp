@@ -36,6 +36,17 @@
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Internal mailbox authentication evidence only; external verification remains separate."
+    },
+    {
+      "id": "sender-identity",
+      "title": "Extract normalized sender identities",
+      "task_manifest": "agent/tasks/sender-identity.json",
+      "status": "ready",
+      "priority": 40,
+      "depends_on": ["authentication-results"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Provider-neutral sender, reply, bounce, and list identity extraction from synthetic normalized messages."
     }
   ]
 }
