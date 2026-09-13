@@ -2,6 +2,8 @@ name: Development companion scheduler
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   schedule:
     - cron: '*/15 * * * *'
 
