@@ -12,6 +12,17 @@ Update relevant public documentation when behavior, architecture, setup, or supp
 
 Do not mark an experiment successful without reproducible evidence. Prefer a documented negative result over an ambiguous or incomplete run.
 
+## Development and test policy
+
+- Development must not depend on real mailbox credentials or production accounts.
+- Use synthetic mailboxes, fixtures, mocks, fakes, and recorded test scenarios for implementation and qualification.
+- Keep the core provider, classification, verification, and action-proposal paths testable without network access where practical.
+- Use GitHub Actions for deterministic checks plus bounded model/agent qualification runs.
+- Treat prompts, policies, routing, confidence thresholds, and verifier behavior as testable versioned artifacts.
+- Exercise agents against normal, ambiguous, multilingual, malformed, adversarial, and prompt-injection cases before considering a behavior qualified.
+- Preserve benchmark outputs or summaries needed to reproduce model/prompt decisions.
+- Real credentials and live mailbox integration are staging/production concerns, not prerequisites for finishing the development core.
+
 ## Data and safety rules
 
 - Use synthetic email data in public benchmark fixtures.
