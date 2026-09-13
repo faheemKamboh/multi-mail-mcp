@@ -77,3 +77,5 @@ jobs:
           path: results/qwen3-14b-reviewer
           if-no-files-found: warn
           retention-days: 7
+
+# Requalification trigger: 2026-09-13
