@@ -47,6 +47,17 @@
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Provider-neutral sender, reply, bounce, and list identity extraction from synthetic normalized messages."
+    },
+    {
+      "id": "sender-stream-key",
+      "title": "Choose an account-scoped sender stream key",
+      "task_manifest": "agent/tasks/sender-stream-key.json",
+      "status": "ready",
+      "priority": 50,
+      "depends_on": ["sender-identity"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Account-scoped exact sender/List-ID grouping key; domain is fallback only."
     }
   ]
 }
