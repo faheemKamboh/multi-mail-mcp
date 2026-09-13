@@ -1,0 +1,22 @@
+{
+  "id": "read-provider-contract",
+  "title": "Define the production read-only provider contract",
+  "objective": "Repair ReadOnlyMailProvider so Phase 1 adapters share a minimal provider-neutral read boundary. The contract must be abstract, expose only paginated message-reference listing and single-message retrieval, and must not introduce mailbox mutation methods. Do not change the test.",
+  "acceptance_criteria": [
+    "the provider contract is abstract and cannot be instantiated directly",
+    "implementations provide list_message_refs with an optional page token",
+    "implementations provide get_message by provider message identifier",
+    "the base contract introduces no send, delete, label, archive, or trash operations",
+    "the fixed acceptance test passes without modification"
+  ],
+  "context_files": [
+    "src/multi_mail/providers/base.py",
+    "tests/test_read_provider_contract.py"
+  ],
+  "editable_files": [
+    "src/multi_mail/providers/base.py"
+  ],
+  "test_commands": [
+    ["python", "tests/test_read_provider_contract.py"]
+  ]
+}
