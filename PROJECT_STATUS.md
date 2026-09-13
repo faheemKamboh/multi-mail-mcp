@@ -8,9 +8,29 @@ Build a provider-agnostic mail assistant that can ingest mail read-only, normali
 
 ## Current phase
 
-**Phase 0: benchmark + development harness**
+**Phase 1: read-only core foundation, still using synthetic credential-free fixtures.**
 
-Current work focuses on reproducible synthetic benchmarks, deterministic validation, model/agent qualification, and GitHub Actions-based testing.
+The benchmark/qualification harness from Phase 0 is operational. Development now proceeds through a bounded GitHub Actions worker/reviewer pipeline and a durable task queue. Real mailbox credentials and destructive actions remain out of scope.
+
+## Current implementation status
+
+Completed foundations:
+
+- reproducible synthetic mail benchmark and deterministic CI;
+- bounded coding worker -> deterministic verifier -> independent adversarial reviewer -> re-verification pipeline;
+- trusted task manifests with editable-file allowlists and fixed tests;
+- development companion scheduler with dependency-aware task selection and overlap protection;
+- durable GitHub-state resolution for merged task PRs and the global failure circuit breaker;
+- reviewed-branch publication fallback for repositories where GitHub Actions cannot create pull requests;
+- synthetic Gmail-like message normalization merged into `main`.
+
+Current bounded queue, in dependency order:
+
+1. parse SPF/DKIM/DMARC authentication evidence;
+2. extract normalized sender identities;
+3. choose an account-scoped sender stream key.
+
+The authentication-results task has been dispatched. It is limited to parsing evidence; sender trust decisions remain a separate later concern.
 
 ## Public project decisions
 
@@ -28,22 +48,9 @@ Current work focuses on reproducible synthetic benchmarks, deterministic validat
 - Worker and reviewer qualification remain independent; reviewer input is task/diff/test evidence rather than worker reasoning.
 - Do not enable autonomous merge while the agent development loop is still being qualified.
 
-## Qualification strategy
+## Known operational constraint
 
-GitHub Actions should exercise agents/models against a synthetic mailbox corpus that includes:
-
-- ordinary transactional and promotional mail;
-- leads, clients, receipts, security alerts, newsletters, and low-value noise;
-- sender/domain clusters and repeated historical patterns;
-- ambiguous messages that require abstention or review;
-- multilingual and Roman-Urdu cases;
-- malformed content and missing metadata;
-- prompt injection, adversarial instructions, and untrusted links/content;
-- verification requests with synthetic/replayable evidence adapters.
-
-Email-processing qualification and coding-agent qualification are separate. Coding workers are tested against intentionally broken synthetic mini-repositories with fixed acceptance tests. Independent reviewers are tested on correct patches as well as security-boundary omissions, test tampering, and secret/environment exposure.
-
-Each qualification run should produce reproducible scoring and enough artifacts to compare model, prompt, policy, and threshold changes. A model or prompt change should only be promoted when it improves the agreed benchmark without unacceptable regressions.
+The repository currently prevents GitHub Actions from opening pull requests. A fully verified bounded run can still push its reviewed branch and finish successfully; the maintainer then opens the PR through an authorized GitHub connection. Unknown publication failures still fail hard.
 
 ## Roadmap
 
@@ -58,16 +65,19 @@ Each qualification run should produce reproducible scoring and enough artifacts 
 - [x] Benchmark documentation aligned with the current qualification suites.
 - [x] Coding-worker and independent-reviewer qualification harnesses added.
 - [x] Duplicate older benchmark PR resolved as superseded.
-- [ ] Add repeated practice/evaluation runs for prompt and policy refinement.
-- [ ] Record reproducible Qwen3 14B email/coding/reviewer qualification evidence.
-- [ ] Decide whether Qwen3 14B is viable as a bounded worker/reviewer candidate.
-- [ ] Add the first trusted task-queue/orchestrator workflow after qualification gates pass.
+- [x] Trusted task queue/orchestrator workflow added and exercised on synthetic work.
+- [ ] Accumulate reproducible Qwen3 14B worker/reviewer evidence over additional bounded tasks.
+- [ ] Decide whether Qwen3 14B remains viable as a bounded worker/reviewer candidate after repeated evidence.
 
 ### Phase 1 — read-only core
 
-- [ ] Provider interface and normalized mail schema.
+- [x] First provider-neutral normalized-message fixture path.
+- [ ] Parse internal authentication evidence from normalized mail.
+- [ ] Normalize sender/reply/bounce/list identities.
+- [ ] Add account-scoped sender stream/grouping keys.
+- [ ] Define the production-facing provider interface and normalized mail schema.
 - [ ] Gmail-compatible read-only adapter with fixture/mock implementation first.
-- [ ] Thread normalization and sender/domain identity extraction.
+- [ ] Thread normalization and sender/domain identity extraction across provider fixtures.
 - [ ] Sender clustering and profile cache.
 - [ ] Classification policy and dry-run action proposal.
 - [ ] Structured audit records.
