@@ -42,30 +42,8 @@ jobs:
             --jq '[.[] | select(.status == "queued" or .status == "in_progress")] | length')
           echo "count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Apply global failure circuit breaker
-        if: steps.active.outputs.count == '0'
-        id: breaker
-        run: |
-          failures=$(gh run list \
-            --repo '${{ github.repository }}' \
-            --workflow agent-task.yml \
-            --limit 2 \
-            --json status,conclusion \
-            --jq '[.[] | select(.status == "completed" and .conclusion != "success")] | length')
-          recent=$(gh run list \
-            --repo '${{ github.repository }}' \
-            --workflow agent-task.yml \
-            --limit 2 \
-            --json status \
-            --jq 'length')
-          blocked=false
-          if [ "$recent" = "2" ] && [ "$failures" = "2" ]; then
-            blocked=true
-          fi
-          echo "blocked=$blocked" >> "$GITHUB_OUTPUT"
-
       - name: Read durable GitHub state
-        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
+        if: steps.active.outputs.count == '0'
         run: |
           gh pr list \
             --repo '${{ github.repository }}' \
@@ -81,7 +59,7 @@ jobs:
             > /tmp/companion-runs.json
 
       - name: Select next eligible task
-        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true'
+        if: steps.active.outputs.count == '0'
         id: task
         run: |
           python -m agent.companion.select_task \
@@ -90,9 +68,10 @@ jobs:
             --runs /tmp/companion-runs.json \
             --out /tmp/selection.json
           echo "task_file=$(python -c 'import json; print(json.load(open("/tmp/selection.json"))["task_manifest"])')" >> "$GITHUB_OUTPUT"
+          echo "blocked=$(python -c 'import json; print(str(json.load(open("/tmp/selection.json"))["blocked"]).lower())')" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch bounded worker/reviewer pipeline
-        if: steps.active.outputs.count == '0' && steps.breaker.outputs.blocked != 'true' && steps.task.outputs.task_file != ''
+        if: steps.active.outputs.count == '0' && steps.task.outputs.blocked != 'true' && steps.task.outputs.task_file != ''
         run: |
           gh workflow run agent-task.yml \
             --repo '${{ github.repository }}' \
