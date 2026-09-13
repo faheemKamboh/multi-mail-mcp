@@ -22,6 +22,10 @@ jobs:
         run: python benchmark/validate_suite.py
       - name: Validate agent qualification assets
         run: python agent/qualification/validate.py
+      - name: Run completed mail-core regressions
+        run: |
+          python agent/tasks/fixtures/email-normalization/test_loader.py
+          python agent/tasks/fixtures/authentication-results/test_parser.py
       - name: Compile benchmark, agent, and production scaffolds
         run: |
           python -m py_compile \
