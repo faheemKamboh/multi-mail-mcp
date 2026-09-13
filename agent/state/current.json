@@ -25,6 +25,17 @@
       "attempts": 0,
       "max_attempts": 2,
       "notes": "First domain task; credential-free Gmail-like fixture only."
+    },
+    {
+      "id": "authentication-results",
+      "title": "Parse SPF DKIM and DMARC verdicts",
+      "task_manifest": "agent/tasks/authentication-results.json",
+      "status": "ready",
+      "priority": 30,
+      "depends_on": ["email-normalization"],
+      "attempts": 0,
+      "max_attempts": 2,
+      "notes": "Internal mailbox authentication evidence only; external verification remains separate."
     }
   ]
 }
