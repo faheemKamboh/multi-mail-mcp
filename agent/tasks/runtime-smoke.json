@@ -1,0 +1,16 @@
+{
+  "id": "runtime-smoke",
+  "title": "Repair autonomous runtime smoke loader",
+  "objective": "Repair the synthetic loader so describe_model reads the existing repo and file keys from its manifest and returns the value expected by the fixed test. Do not change the manifest or test.",
+  "context_files": [
+    "agent/tasks/fixtures/runtime-smoke/manifest.json",
+    "agent/tasks/fixtures/runtime-smoke/loader.py",
+    "agent/tasks/fixtures/runtime-smoke/test_loader.py"
+  ],
+  "editable_files": [
+    "agent/tasks/fixtures/runtime-smoke/loader.py"
+  ],
+  "test_commands": [
+    ["python", "agent/tasks/fixtures/runtime-smoke/test_loader.py"]
+  ]
+}
