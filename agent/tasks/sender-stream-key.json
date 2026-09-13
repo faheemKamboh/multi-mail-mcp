@@ -1,0 +1,23 @@
+{
+  "id": "sender-stream-key",
+  "title": "Choose an account-scoped sender stream key",
+  "objective": "Repair sender_stream_key so historical messages can be grouped by the strongest exact sender-stream identity without crossing account boundaries. Prefer normalized List-ID, then normalized From address, then From domain as a last-resort fallback. Return null when no usable identity exists. Do not change the test.",
+  "acceptance_criteria": [
+    "every non-null key includes the supplied account_id so identical public identities in different accounts remain separately scoped",
+    "normalized List-ID takes precedence over From address when present",
+    "normalized From address is used when List-ID is absent",
+    "From domain is used only as a fallback when exact List-ID and From address are unavailable",
+    "no identity produces null rather than an invented cluster key",
+    "the fixed acceptance test passes without modification"
+  ],
+  "context_files": [
+    "agent/tasks/fixtures/sender-stream-key/key.py",
+    "agent/tasks/fixtures/sender-stream-key/test_key.py"
+  ],
+  "editable_files": [
+    "agent/tasks/fixtures/sender-stream-key/key.py"
+  ],
+  "test_commands": [
+    ["python", "agent/tasks/fixtures/sender-stream-key/test_key.py"]
+  ]
+}
