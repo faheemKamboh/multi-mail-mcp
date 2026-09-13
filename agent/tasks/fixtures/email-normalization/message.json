@@ -1,0 +1,17 @@
+{
+  "id": "msg-001",
+  "threadId": "thread-007",
+  "labelIds": ["INBOX", "CATEGORY_UPDATES"],
+  "snippet": "Your September invoice is ready.",
+  "payload": {
+    "headers": [
+      {"name": "From", "value": "Billing Example <billing@example.test>"},
+      {"name": "To", "value": "user@example.test"},
+      {"name": "Subject", "value": "September invoice"},
+      {"name": "Reply-To", "value": "support@example.test"},
+      {"name": "Return-Path", "value": "bounce@example.test"},
+      {"name": "List-ID", "value": "billing.example.test"},
+      {"name": "Authentication-Results", "value": "mx.example.test; spf=pass; dkim=pass; dmarc=pass"}
+    ]
+  }
+}
