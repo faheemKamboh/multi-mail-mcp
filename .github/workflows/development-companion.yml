@@ -1,0 +1,36 @@
+name: Development companion
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: development-companion
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Validate queue
+        run: python -m agent.companion.validate_state
+      - name: Select one ready task
+        id: task
+        run: |
+          python -m agent.companion.loop --state agent/state/current.json --out /tmp/companion.json --max-tasks 1
+          echo "task_file=$(python -c 'import json; d=json.load(open("/tmp/companion.json")); print(d["selected"][0]["task_manifest"] if d["selected"] else "")')" >> "$GITHUB_OUTPUT"
+      - name: Dispatch bounded task workflow
+        if: steps.task.outputs.task_file != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run agent-task.yml -f task_file="${{ steps.task.outputs.task_file }}" -f model_key=qwen3-14b-q4
