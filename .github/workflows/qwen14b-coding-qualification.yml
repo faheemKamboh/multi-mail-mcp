@@ -1,0 +1,78 @@
+name: Qwen3 14B coding qualification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [benchmark-qualification]
+    paths:
+      - '.github/workflows/qwen14b-coding-qualification.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qwen14b-coding-qualification
+  cancel-in-progress: false
+
+jobs:
+  worker-qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PIP_NO_CACHE_DIR: '1'
+      HF_HOME: /tmp/huggingface
+      HF_XET_CHUNK_CACHE_SIZE_BYTES: '0'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate public benchmark configuration
+        run: python benchmark/validate_suite.py
+
+      - name: Show runner capacity
+        run: |
+          nproc
+          free -h
+          df -h /
+
+      - name: Verify qualification fixtures fail before repair
+        run: |
+          ! (cd agent/qualification/fixtures/config-key-compatibility && python test_loader.py)
+          ! (cd agent/qualification/fixtures/untrusted-boundary-score && python test_scorer.py)
+
+      - name: Install CPU inference dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'huggingface_hub>=0.34'
+          python -m pip install 'llama-cpp-python>=0.3.16' \
+            --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+
+      - name: Qualify bounded coding worker
+        run: |
+          python agent/qualification/run_worker_qualification.py \
+            --model-key qwen3-14b-q4 \
+            --output-dir results/qwen3-14b-coding
+
+      - name: Require both initial coding tasks to pass
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path('results/qwen3-14b-coding/summary.json').read_text())
+          print(json.dumps(summary, indent=2))
+          if summary['pass_rate'] < 1.0:
+              raise SystemExit('Qwen3 14B did not pass every initial coding qualification task')
+          PY
+
+      - name: Upload coding qualification report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qwen3-14b-coding-qualification
+          path: results/qwen3-14b-coding
+          if-no-files-found: warn
+          retention-days: 7
