@@ -10,7 +10,7 @@ Build a provider-agnostic mail assistant that can ingest mail read-only, normali
 
 **Phase 1: read-only core foundation, still using synthetic credential-free fixtures.**
 
-The benchmark/qualification harness from Phase 0 is operational. Development now proceeds through a bounded GitHub Actions worker/reviewer pipeline and a durable task queue. Real mailbox credentials and destructive actions remain out of scope.
+The benchmark/qualification harness from Phase 0 is operational. Development proceeds through a bounded GitHub Actions worker/reviewer pipeline and a durable dependency queue. Real mailbox credentials and destructive actions remain out of scope.
 
 ## Current implementation status
 
@@ -22,15 +22,23 @@ Completed foundations:
 - development companion scheduler with dependency-aware task selection and overlap protection;
 - durable GitHub-state resolution for merged task PRs and the global failure circuit breaker;
 - reviewed-branch publication fallback for repositories where GitHub Actions cannot create pull requests;
-- synthetic Gmail-like message normalization merged into `main`.
+- synthetic Gmail-like message normalization merged into `main`;
+- SPF/DKIM/DMARC authentication-evidence parsing merged into `main` and retained as a permanent CI regression;
+- initial production source package and bounded task scaffolds for production normalization, a read-only provider contract, and a credential-free Gmail-style adapter.
 
 Current bounded queue, in dependency order:
 
-1. parse SPF/DKIM/DMARC authentication evidence;
-2. extract normalized sender identities;
-3. choose an account-scoped sender stream key.
+1. **in progress:** extract normalized sender identities;
+2. choose an account-scoped sender stream key;
+3. promote provider-message normalization into the production source package;
+4. define the production read-only provider contract;
+5. implement the credential-free Gmail-style read adapter around an injected fake client.
 
-The authentication-results task has been dispatched. It is limited to parsing evidence; sender trust decisions remain a separate later concern.
+### Qwen3-14B qualification evidence
+
+The `authentication-results` task exhausted both allowed Qwen3-14B attempts. Both proposals produced the same case-sensitive `SPF=` regex while claiming case-insensitive behavior, and both were rejected by the fixed deterministic test. The task was then repaired through a maintainer PR, preserving the failed model evidence rather than treating it as a pass.
+
+This is evidence against relying on Qwen3-14B as an unsupervised coding worker even for small bounded tasks. Continue collecting evidence on later tasks, but deterministic verification and retry limits remain mandatory.
 
 ## Public project decisions
 
@@ -66,17 +74,18 @@ The repository currently prevents GitHub Actions from opening pull requests. A f
 - [x] Coding-worker and independent-reviewer qualification harnesses added.
 - [x] Duplicate older benchmark PR resolved as superseded.
 - [x] Trusted task queue/orchestrator workflow added and exercised on synthetic work.
-- [ ] Accumulate reproducible Qwen3 14B worker/reviewer evidence over additional bounded tasks.
-- [ ] Decide whether Qwen3 14B remains viable as a bounded worker/reviewer candidate after repeated evidence.
+- [ ] Accumulate reproducible Qwen3-14B worker/reviewer evidence over additional bounded tasks.
+- [ ] Decide whether Qwen3-14B remains viable as a bounded worker/reviewer candidate after repeated evidence.
 
 ### Phase 1 — read-only core
 
 - [x] First provider-neutral normalized-message fixture path.
-- [ ] Parse internal authentication evidence from normalized mail.
+- [x] Parse internal authentication evidence from normalized mail.
 - [ ] Normalize sender/reply/bounce/list identities.
 - [ ] Add account-scoped sender stream/grouping keys.
-- [ ] Define the production-facing provider interface and normalized mail schema.
-- [ ] Gmail-compatible read-only adapter with fixture/mock implementation first.
+- [ ] Promote normalized-message behavior into the production source package.
+- [ ] Define the production-facing read-only provider interface.
+- [ ] Gmail-compatible read-only adapter with injected fixture/mock client first.
 - [ ] Thread normalization and sender/domain identity extraction across provider fixtures.
 - [ ] Sender clustering and profile cache.
 - [ ] Classification policy and dry-run action proposal.
