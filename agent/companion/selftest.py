@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from agent.companion.contracts import CompanionState, CompanionTask
-from agent.companion.select_task import pr_state, slug
+from agent.companion.select_task import failed_attempts, pr_state, slug
 
 
 def run() -> None:
@@ -34,6 +34,25 @@ def run() -> None:
         "state": "CLOSED",
         "mergedAt": "2026-09-13T00:00:00Z",
     }]) == "merged"
+
+    runs = [
+        {
+            "displayTitle": "agent-task agent/tasks/runtime-smoke.json",
+            "status": "completed",
+            "conclusion": "failure",
+        },
+        {
+            "displayTitle": "agent-task agent/tasks/another-task.json",
+            "status": "completed",
+            "conclusion": "failure",
+        },
+        {
+            "displayTitle": "agent-task agent/tasks/runtime-smoke.json",
+            "status": "completed",
+            "conclusion": "success",
+        },
+    ]
+    assert failed_attempts("agent/tasks/runtime-smoke.json", runs) == 1
 
     try:
         CompanionState(tasks=[CompanionTask(
