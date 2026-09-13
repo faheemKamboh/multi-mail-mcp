@@ -14,7 +14,6 @@ assert extract_sender_identity({
     "return_path_address": "bounce@example.test",
     "return_path_domain": "example.test",
     "list_id": "billing.example.test",
-    "list_domain": "billing.example.test",
 }
 
 assert extract_sender_identity({
@@ -30,5 +29,4 @@ assert extract_sender_identity({
     "return_path_address": None,
     "return_path_domain": None,
     "list_id": None,
-    "list_domain": None,
 }
