@@ -6,6 +6,10 @@ on:
     branches: [benchmark-qualification]
     paths:
       - '.github/workflows/qwen14b-reviewer-qualification.yml'
+      - 'agent/qualification/run_reviewer_qualification.py'
+      - 'agent/qualification/review_cases.json'
+      - 'agent/qualification/validate.py'
+      - 'benchmark/large_models.json'
 
 permissions:
   contents: read
@@ -24,14 +28,16 @@ jobs:
       HF_XET_CHUNK_CACHE_SIZE_BYTES: '0'
       HF_HUB_DISABLE_TELEMETRY: '1'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
-      - name: Validate benchmark configuration
-        run: python benchmark/validate_suite.py
+      - name: Validate qualification assets
+        run: |
+          python benchmark/validate_suite.py
+          python agent/qualification/validate.py
 
       - name: Show runner capacity
         run: |
@@ -52,7 +58,7 @@ jobs:
             --model-key qwen3-14b-q4 \
             --output-dir results/qwen3-14b-reviewer
 
-      - name: Require all initial review cases to pass
+      - name: Require all review cases to pass
         run: |
           python - <<'PY'
           import json
@@ -60,7 +66,7 @@ jobs:
           summary = json.loads(Path('results/qwen3-14b-reviewer/summary.json').read_text())
           print(json.dumps(summary, indent=2))
           if summary['pass_rate'] < 1.0:
-              raise SystemExit('Qwen3 14B did not pass every initial reviewer qualification case')
+              raise SystemExit('Qwen3 14B did not pass every reviewer qualification case')
           PY
 
       - name: Upload reviewer qualification report
