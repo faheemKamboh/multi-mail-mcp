@@ -28,9 +28,9 @@ def _json_object_from_content(content: object) -> dict:
     value = content.strip()
     if value.startswith("~~~"):
         lines = value.splitlines()
-        if lines and lines[0].startswith("~~~"):
+        if lines and lines[0].startswith(fence):
             lines = lines[1:]
-        if lines and lines[-1].strip() == "~~~":
+        if lines and lines[-1].strip() == fence:
             lines = lines[:-1]
         value = "\n".join(lines).strip()
         if value.lower().startswith("json\n"):
