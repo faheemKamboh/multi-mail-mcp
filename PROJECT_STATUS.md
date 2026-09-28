@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-09-13
+Last updated: 2026-09-28
 
 ## Goal
 
@@ -24,7 +24,12 @@ Completed foundations:
 - reviewed-branch publication fallback for repositories where GitHub Actions cannot create pull requests;
 - synthetic Gmail-like message normalization merged into `main`;
 - SPF/DKIM/DMARC authentication-evidence parsing merged into `main` and retained as a permanent CI regression;
-- initial production source package and bounded task scaffolds for production normalization, a read-only provider contract, and a credential-free Gmail-style adapter.
+- production Gmail-like message normalization implemented and covered by the fixed acceptance test;
+- provider-neutral abstract read-only provider contract implemented;
+- credential-free Gmail-style read adapter implemented around an injected client;
+- test-launch inference routing primitives implemented for deterministic/local/protected/external-batch decisions;
+- compact external-review batching implemented so multiple eligible mail-review jobs can share one normal model request;
+- deterministic sensitivity gating prevents protected candidates from entering the ordinary external review batch.
 
 Current bounded queue, in dependency order:
 
@@ -59,6 +64,12 @@ This is evidence against relying on Qwen3-14B as an unsupervised coding worker e
 ## Known operational constraint
 
 The repository currently prevents GitHub Actions from opening pull requests. A fully verified bounded run can still push its reviewed branch and finish successfully; the maintainer then opens the PR through an authorized GitHub connection. Unknown publication failures still fail hard.
+
+## Test-launch scope
+
+The V0.1 private-test boundary is frozen in `docs/TEST_LAUNCH_V0_1.md`. The launch remains read-only: classification, importance, action-needed indication, suggested labels, confidence, reason, and inference route are in scope; mailbox writes, billing, multi-user SaaS, extra production providers, and theme work are postponed.
+
+The local-first routing direction is deterministic rules/cache -> small private model -> packed external review only for uncertain standard-sensitivity items. Protected uncertain items stay on a protected/human path.
 
 ## Roadmap
 
