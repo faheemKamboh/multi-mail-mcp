@@ -34,10 +34,9 @@ Completed foundations:
 Current bounded queue, in dependency order:
 
 1. **in progress:** extract normalized sender identities;
-2. choose an account-scoped sender stream key;
-3. promote provider-message normalization into the production source package;
-4. define the production read-only provider contract;
-5. implement the credential-free Gmail-style read adapter around an injected fake client.
+2. choose an account-scoped sender stream key.
+
+The production message normalizer, read-only provider contract, and credential-free Gmail adapter were completed directly in the V0.1 launch-core change and marked done in durable companion state so the development scheduler does not duplicate them.
 
 ### Qwen3-14B qualification evidence
 
