@@ -112,3 +112,13 @@ except ValueError as exc:
     assert "unknown id" in str(exc)
 else:
     raise AssertionError("unknown review IDs must fail closed")
+
+duplicate_model = FakeJSONModel([])
+duplicate_batch = [dict(batches[0][0]), dict(batches[0][0])]
+try:
+    ExternalBatchReviewer(duplicate_model).review(duplicate_batch)
+except ValueError as exc:
+    assert "duplicate ids" in str(exc)
+else:
+    raise AssertionError("duplicate request IDs must fail before model review")
+assert duplicate_model.calls == []
