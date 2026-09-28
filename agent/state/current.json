@@ -21,7 +21,9 @@
       "task_manifest": "agent/tasks/email-normalization.json",
       "status": "ready",
       "priority": 20,
-      "depends_on": ["runtime-smoke"],
+      "depends_on": [
+        "runtime-smoke"
+      ],
       "attempts": 0,
       "max_attempts": 2,
       "notes": "First domain task; credential-free Gmail-like fixture only."
@@ -32,7 +34,9 @@
       "task_manifest": "agent/tasks/authentication-results.json",
       "status": "ready",
       "priority": 30,
-      "depends_on": ["email-normalization"],
+      "depends_on": [
+        "email-normalization"
+      ],
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Internal mailbox authentication evidence only; external verification remains separate."
@@ -43,7 +47,9 @@
       "task_manifest": "agent/tasks/sender-identity.json",
       "status": "ready",
       "priority": 40,
-      "depends_on": ["authentication-results"],
+      "depends_on": [
+        "authentication-results"
+      ],
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Provider-neutral sender, reply, bounce, and list identity extraction from synthetic normalized messages."
@@ -54,7 +60,9 @@
       "task_manifest": "agent/tasks/sender-stream-key.json",
       "status": "ready",
       "priority": 50,
-      "depends_on": ["sender-identity"],
+      "depends_on": [
+        "sender-identity"
+      ],
       "attempts": 0,
       "max_attempts": 2,
       "notes": "Account-scoped exact sender/List-ID grouping key; domain is fallback only."
@@ -63,34 +71,40 @@
       "id": "production-message-normalizer",
       "title": "Promote message normalization into production core",
       "task_manifest": "agent/tasks/production-message-normalizer.json",
-      "status": "ready",
+      "status": "done",
       "priority": 60,
-      "depends_on": ["sender-stream-key"],
+      "depends_on": [
+        "sender-stream-key"
+      ],
       "attempts": 0,
       "max_attempts": 2,
-      "notes": "First bounded task that edits the production source package rather than qualification fixture code."
+      "notes": "Completed through maintainer V0.1 launch core with fixed deterministic acceptance tests (PR #23)."
     },
     {
       "id": "read-provider-contract",
       "title": "Define the production read-only provider contract",
       "task_manifest": "agent/tasks/read-provider-contract.json",
-      "status": "ready",
+      "status": "done",
       "priority": 70,
-      "depends_on": ["production-message-normalizer"],
+      "depends_on": [
+        "production-message-normalizer"
+      ],
       "attempts": 0,
       "max_attempts": 2,
-      "notes": "Provider-neutral Phase 1 read boundary; mailbox mutation methods are explicitly excluded."
+      "notes": "Completed through maintainer V0.1 launch core with fixed deterministic acceptance tests (PR #23)."
     },
     {
       "id": "gmail-fixture-read-adapter",
       "title": "Implement credential-free Gmail read adapter",
       "task_manifest": "agent/tasks/gmail-fixture-read-adapter.json",
-      "status": "ready",
+      "status": "done",
       "priority": 80,
-      "depends_on": ["read-provider-contract"],
+      "depends_on": [
+        "read-provider-contract"
+      ],
       "attempts": 0,
       "max_attempts": 2,
-      "notes": "Injected fake Gmail-style client only; no secrets, OAuth, or production mailbox access."
+      "notes": "Completed through maintainer V0.1 launch core with fixed deterministic acceptance tests (PR #23)."
     }
   ]
 }
