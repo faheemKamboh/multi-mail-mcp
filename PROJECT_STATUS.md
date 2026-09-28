@@ -29,7 +29,11 @@ Completed foundations:
 - credential-free Gmail-style read adapter implemented around an injected client;
 - test-launch inference routing primitives implemented for deterministic/local/protected/external-batch decisions;
 - compact external-review batching implemented so multiple eligible mail-review jobs can share one normal model request;
-- deterministic sensitivity gating prevents protected candidates from entering the ordinary external review batch.
+- deterministic sensitivity gating prevents protected candidates from entering the ordinary external review batch;
+- installable Python package boundary for private-cloud reuse;
+- OpenAI-compatible JSON client suitable for a private local endpoint;
+- OpenRouter free-router adapter with injectable credential-free test transport;
+- strict local classification and external batch-review result validation, including exact per-message ID reconciliation.
 
 Current bounded queue, in dependency order:
 
@@ -93,12 +97,12 @@ The local-first routing direction is deterministic rules/cache -> small private 
 - [x] Parse internal authentication evidence from normalized mail.
 - [ ] Normalize sender/reply/bounce/list identities.
 - [ ] Add account-scoped sender stream/grouping keys.
-- [ ] Promote normalized-message behavior into the production source package.
-- [ ] Define the production-facing read-only provider interface.
-- [ ] Gmail-compatible read-only adapter with injected fixture/mock client first.
+- [x] Promote normalized-message behavior into the production source package.
+- [x] Define the production-facing read-only provider interface.
+- [x] Gmail-compatible read-only adapter with injected fixture/mock client first.
 - [ ] Thread normalization and sender/domain identity extraction across provider fixtures.
 - [ ] Sender clustering and profile cache.
-- [ ] Classification policy and dry-run action proposal.
+- [x] Initial V0.1 classification schema, local classifier, and dry-run packed reviewer contracts.
 - [ ] Structured audit records.
 - [ ] Synthetic and fixture-based integration tests in GitHub Actions.
 
