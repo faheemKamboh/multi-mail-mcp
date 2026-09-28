@@ -60,4 +60,10 @@ Synthetic email benchmarks remain an important subsystem. They are used to quali
 - Provider-specific payloads are normalized behind adapter boundaries.
 - Agent edits are constrained by trusted manifests and fixed deterministic tests.
 
+## Test-launch direction
+
+The private V0.1 is intentionally local-first and read-only. The reusable core now defines a routing boundary for deterministic handling, a small private/local model, protected-message review, and packed external review for uncertain standard-sensitivity mail. Multiple eligible email-review jobs can be compacted into one ordinary external model request.
+
+The frozen scope and explicit postponements are documented in [`docs/TEST_LAUNCH_V0_1.md`](docs/TEST_LAUNCH_V0_1.md).
+
 See [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the current queue and implementation status, and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the architecture direction.

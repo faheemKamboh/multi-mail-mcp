@@ -26,7 +26,11 @@ jobs:
         run: |
           python agent/tasks/fixtures/email-normalization/test_loader.py
           python agent/tasks/fixtures/authentication-results/test_parser.py
-      - name: Compile benchmark, agent, and production scaffolds
+          python tests/test_production_normalizer.py
+          python tests/test_read_provider_contract.py
+          python tests/test_gmail_fixture_adapter.py
+          python tests/test_inference_routing.py
+      - name: Compile benchmark, agent, and production modules
         run: |
           python -m py_compile \
             benchmark/validate_suite.py \
@@ -44,9 +48,7 @@ jobs:
             agent/runtime/publish.py \
             src/multi_mail/__init__.py \
             src/multi_mail/normalize.py \
+            src/multi_mail/inference.py \
             src/multi_mail/providers/__init__.py \
             src/multi_mail/providers/base.py \
-            src/multi_mail/providers/gmail.py \
-            tests/test_production_normalizer.py \
-            tests/test_read_provider_contract.py \
-            tests/test_gmail_fixture_adapter.py
+            src/multi_mail/providers/gmail.py
