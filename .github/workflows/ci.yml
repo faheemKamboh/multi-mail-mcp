@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+      - name: Install reusable core
+        run: pip install -e .
       - name: Validate benchmark configuration
         run: python benchmark/validate_suite.py
       - name: Validate agent qualification assets
@@ -30,6 +32,8 @@ jobs:
           python tests/test_read_provider_contract.py
           python tests/test_gmail_fixture_adapter.py
           python tests/test_inference_routing.py
+          python tests/test_model_clients.py
+          python tests/test_classification.py
       - name: Compile benchmark, agent, and production modules
         run: |
           python -m py_compile \
@@ -49,6 +53,8 @@ jobs:
             src/multi_mail/__init__.py \
             src/multi_mail/normalize.py \
             src/multi_mail/inference.py \
+            src/multi_mail/model_clients.py \
+            src/multi_mail/classification.py \
             src/multi_mail/providers/__init__.py \
             src/multi_mail/providers/base.py \
             src/multi_mail/providers/gmail.py
