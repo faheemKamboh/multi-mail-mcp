@@ -136,6 +136,8 @@ class ExternalBatchReviewer:
             raise ValueError("review response must contain a results array")
 
         expected_ids = [str(item["id"]) for item in batch]
+        if len(expected_ids) != len(set(expected_ids)):
+            raise ValueError("review batch contains duplicate ids")
         seen: set[str] = set()
         parsed: list[ReviewedClassification] = []
         for item in results:
