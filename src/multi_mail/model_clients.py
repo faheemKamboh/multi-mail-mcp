@@ -26,7 +26,8 @@ def _json_object_from_content(content: object) -> dict:
         raise ValueError("model response content must be a JSON object or JSON string")
 
     value = content.strip()
-    if value.startswith("~~~"):
+    fence = chr(96) * 3
+    if value.startswith(fence):
         lines = value.splitlines()
         if lines and lines[0].startswith(fence):
             lines = lines[1:]
