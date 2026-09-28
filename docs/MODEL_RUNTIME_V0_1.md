@@ -30,6 +30,8 @@ The initial external adapter targets OpenRouter's OpenAI-compatible API:
 - initial model: `openrouter/free`;
 - bearer API key required;
 - JSON response mode requested;
+- `provider.zdr=true` is enforced for every request;
+- `provider.data_collection="deny"` is enforced for every request;
 - optional site URL/title headers are supported.
 
 The product must treat this as a replaceable adapter, not as a permanent free

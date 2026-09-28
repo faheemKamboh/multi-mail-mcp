@@ -78,6 +78,7 @@ assert kwargs["headers"]["HTTP-Referer"] == "https://mail.example.test"
 assert kwargs["headers"]["X-Title"] == "Multi-Mail"
 assert kwargs["json"]["model"] == "openrouter/free"
 assert kwargs["json"]["response_format"] == {"type": "json_object"}
+assert kwargs["json"]["provider"] == {"zdr": True, "data_collection": "deny"}
 
 try:
     OpenRouterFreeJSONClient(api_key="  ")

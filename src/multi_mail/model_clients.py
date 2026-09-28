@@ -58,6 +58,7 @@ class OpenAICompatibleJSONClient:
     timeout_seconds: float = 45.0
     json_mode: bool = False
     extra_headers: Mapping[str, str] = field(default_factory=dict)
+    extra_body: Mapping[str, object] = field(default_factory=dict)
     post_json: PostJSON = _default_post
 
     @property
@@ -82,6 +83,7 @@ class OpenAICompatibleJSONClient:
         }
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}
+        body.update(dict(self.extra_body))
 
         response = self.post_json(
             self.endpoint,
@@ -127,5 +129,11 @@ class OpenRouterFreeJSONClient(OpenAICompatibleJSONClient):
             timeout_seconds=timeout_seconds,
             json_mode=True,
             extra_headers=headers,
+            extra_body={
+                "provider": {
+                    "zdr": True,
+                    "data_collection": "deny",
+                }
+            },
             post_json=post_json,
         )
